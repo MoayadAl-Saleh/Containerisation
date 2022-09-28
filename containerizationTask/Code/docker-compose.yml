@@ -1,0 +1,58 @@
+version: "3.8"  # optional since v1.27.0
+services:
+  enterdata:
+    build: ./EnterData
+    ports:
+      - "3000:3000"
+    container_name: enterdata
+    depends_on:
+      - mysqldatabase
+
+  authenticationservice:
+    build: ./Authentication Service
+    ports:
+      - "3001:3001"
+    container_name: authenticationservice
+    depends_on:
+      - mysqldatabase
+
+  analyticsservice:
+    build: ./Analytics Service
+    ports:
+      - "3003:3003"
+    container_name: analyticsservice
+    depends_on:
+      - mysqldatabase
+  
+  showresults:
+    build: ./Show Results 
+    ports:
+     - "3004:3004"
+    container_name: showresults
+    depends_on:
+     - mongodatabase
+
+  mysqldatabase :
+    image: mysql:8.0
+    container_name : mysqldatabase
+    restart: unless-stopped
+    volumes :
+      - ./MySqlDB/db:/var/lib/mysql
+    environment :
+      - MYSQL_HOST=localhost
+      - MYSQL_PASSWORD=1231456
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+
+  mongodatabase:
+   container_name: mongodatabase 
+   image: mongo:latest
+   restart: always
+   volumes:
+      - ./mongo_db:/data/db
+   ports:
+      - "27017:27017"
+
+
+
